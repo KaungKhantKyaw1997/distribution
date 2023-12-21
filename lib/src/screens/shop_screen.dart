@@ -8,14 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-class OrderScreen extends StatefulWidget {
-  const OrderScreen({super.key});
+class ShopScreen extends StatefulWidget {
+  const ShopScreen({super.key});
 
   @override
-  State<OrderScreen> createState() => _OrderScreenState();
+  State<ShopScreen> createState() => _ShopScreenState();
 }
 
-class _OrderScreenState extends State<OrderScreen> {
+class _ShopScreenState extends State<ShopScreen> {
   final ScrollController _scrollController = ScrollController();
   TextEditingController search = TextEditingController(text: '');
   FocusNode _searchFocusNode = FocusNode();

@@ -2,7 +2,7 @@ import 'package:distribution/global.dart';
 import 'package:distribution/src/providers/bottom_provider.dart';
 import 'package:distribution/src/screens/dashboard_screen.dart';
 import 'package:distribution/src/screens/history_screen.dart';
-import 'package:distribution/src/screens/order_screen.dart';
+import 'package:distribution/src/screens/shop_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -35,7 +35,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
           PageRouteBuilder(
             pageBuilder: (BuildContext context, Animation<double> animation,
                 Animation<double> secondaryAnimation) {
-              return OrderScreen();
+              return ShopScreen();
             },
             transitionsBuilder: (BuildContext context,
                 Animation<double> animation,
