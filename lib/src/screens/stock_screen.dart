@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:distribution/global.dart';
+import 'package:distribution/routes.dart';
 import 'package:distribution/src/constants/color_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -187,6 +188,7 @@ class _StockScreenState extends State<StockScreen> {
       child: Container(
         padding: EdgeInsets.symmetric(
           horizontal: 16,
+          vertical: 12,
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
@@ -203,8 +205,8 @@ class _StockScreenState extends State<StockScreen> {
         child: Row(
           children: [
             Container(
-              width: 60,
-              height: 60,
+              width: 70,
+              height: 70,
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage('assets/images/logo.png'),
@@ -356,7 +358,7 @@ class _StockScreenState extends State<StockScreen> {
                 shrinkWrap: true,
                 itemCount: stocks.length,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  mainAxisExtent: 80,
+                  mainAxisExtent: 90,
                   crossAxisSpacing: 8,
                   crossAxisCount: 1,
                   mainAxisSpacing: 8,
@@ -380,7 +382,13 @@ class _StockScreenState extends State<StockScreen> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      Routes.order,
+                      (route) => true,
+                    );
+                  },
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,

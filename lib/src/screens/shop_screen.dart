@@ -82,6 +82,7 @@ class _ShopScreenState extends State<ShopScreen> {
       child: Container(
         padding: EdgeInsets.symmetric(
           horizontal: 16,
+          vertical: 12,
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
@@ -90,8 +91,8 @@ class _ShopScreenState extends State<ShopScreen> {
         child: Row(
           children: [
             Container(
-              width: 60,
-              height: 60,
+              width: 70,
+              height: 70,
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage('assets/images/logo.png'),
@@ -226,7 +227,7 @@ class _ShopScreenState extends State<ShopScreen> {
                 shrinkWrap: true,
                 itemCount: shops.length,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  mainAxisExtent: 80,
+                  mainAxisExtent: 90,
                   crossAxisSpacing: 8,
                   crossAxisCount: 1,
                   mainAxisSpacing: 8,
