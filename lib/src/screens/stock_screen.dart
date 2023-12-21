@@ -16,6 +16,7 @@ class StockScreen extends StatefulWidget {
 class _StockScreenState extends State<StockScreen> {
   final ScrollController _scrollController = ScrollController();
   TextEditingController search = TextEditingController(text: '');
+  FocusNode _searchFocusNode = FocusNode();
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
   List data = [];
@@ -75,6 +76,7 @@ class _StockScreenState extends State<StockScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _searchFocusNode.dispose();
     super.dispose();
   }
 
@@ -259,147 +261,164 @@ class _StockScreenState extends State<StockScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        centerTitle: true,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        title: TextField(
-          controller: search,
-          keyboardType: TextInputType.text,
-          textInputAction: TextInputAction.done,
-          style: Theme.of(context).textTheme.bodyLarge,
-          cursorColor: Colors.black,
-          decoration: InputDecoration(
-            hintText: language["Search"] ?? "Search",
-            filled: true,
-            fillColor: ColorConstants.fillColor,
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),
-              borderSide: BorderSide.none,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),
-              borderSide: BorderSide.none,
-            ),
-          ),
-          onChanged: (value) {
-            _debounce?.cancel();
-            _debounce = Timer(Duration(milliseconds: 300), () {
-              data = [];
-              page = 1;
-            });
-          },
-        ),
-        actions: [
-          IconButton(
-            icon: SvgPicture.asset(
-              "assets/icons/filter.svg",
-              width: 24,
-              height: 24,
-              colorFilter: const ColorFilter.mode(
-                Colors.black,
-                BlendMode.srcIn,
-              ),
-            ),
-            onPressed: () {
-              _showFilterBottomSheet(context);
-            },
-          ),
-        ],
-      ),
-      body: SmartRefresher(
-        header: WaterDropMaterialHeader(
-          backgroundColor: Theme.of(context).primaryColor,
-          color: Colors.white,
-        ),
-        footer: ClassicFooter(),
-        controller: _refreshController,
-        enablePullDown: true,
-        enablePullUp: true,
-        onRefresh: () async {
-          _refreshController.refreshCompleted();
-        },
-        onLoading: () async {
-          _refreshController.loadComplete();
-        },
-        child: SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 24,
-            ),
-            child: GridView.builder(
-              controller: _scrollController,
-              shrinkWrap: true,
-              itemCount: stocks.length,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                mainAxisExtent: 80,
-                crossAxisSpacing: 8,
-                crossAxisCount: 1,
-                mainAxisSpacing: 8,
-              ),
-              itemBuilder: (context, index) {
-                return shopCard(index);
-              },
-            ),
-          ),
-        ),
-      ),
-      floatingActionButton: selectedCount > 0
-          ? Container(
-              padding: EdgeInsets.symmetric(
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        _searchFocusNode.unfocus();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          centerTitle: true,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          title: TextField(
+            controller: search,
+            focusNode: _searchFocusNode,
+            keyboardType: TextInputType.text,
+            textInputAction: TextInputAction.done,
+            style: Theme.of(context).textTheme.bodyLarge,
+            cursorColor: Colors.black,
+            decoration: InputDecoration(
+              hintText: language["Search"] ?? "Search",
+              filled: true,
+              fillColor: ColorConstants.fillColor,
+              contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
               ),
-              width: double.infinity,
-              child: FloatingActionButton(
-                elevation: 0.1,
-                backgroundColor: Theme.of(context).primaryColorLight,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                onPressed: () {},
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Stocks: ${selectedCount}",
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.labelLarge,
-                      ),
-                      Container(
-                        width: 35,
-                        height: 35,
-                        padding: EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                          color: Colors.white,
-                        ),
-                        child: SvgPicture.asset(
-                          "assets/icons/right-arrow.svg",
-                          width: 24,
-                          height: 24,
-                          colorFilter: const ColorFilter.mode(
-                            Colors.black,
-                            BlendMode.srcIn,
-                          ),
-                        ),
-                      ),
-                    ],
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: BorderSide.none,
+              ),
+              prefixIcon: IconButton(
+                onPressed: null,
+                icon: SvgPicture.asset(
+                  "assets/icons/search.svg",
+                  colorFilter: ColorFilter.mode(
+                    Colors.grey,
+                    BlendMode.srcIn,
                   ),
                 ),
               ),
-            )
-          : null,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+            ),
+            onChanged: (value) {
+              _debounce?.cancel();
+              _debounce = Timer(Duration(milliseconds: 300), () {
+                data = [];
+                page = 1;
+              });
+            },
+          ),
+          actions: [
+            IconButton(
+              icon: SvgPicture.asset(
+                "assets/icons/filter.svg",
+                width: 24,
+                height: 24,
+                colorFilter: const ColorFilter.mode(
+                  Colors.black,
+                  BlendMode.srcIn,
+                ),
+              ),
+              onPressed: () {
+                _showFilterBottomSheet(context);
+              },
+            ),
+          ],
+        ),
+        body: SmartRefresher(
+          header: WaterDropMaterialHeader(
+            backgroundColor: Theme.of(context).primaryColor,
+            color: Colors.white,
+          ),
+          footer: ClassicFooter(),
+          controller: _refreshController,
+          enablePullDown: true,
+          enablePullUp: true,
+          onRefresh: () async {
+            _refreshController.refreshCompleted();
+          },
+          onLoading: () async {
+            _refreshController.loadComplete();
+          },
+          child: SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 24,
+              ),
+              child: GridView.builder(
+                controller: _scrollController,
+                shrinkWrap: true,
+                itemCount: stocks.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  mainAxisExtent: 80,
+                  crossAxisSpacing: 8,
+                  crossAxisCount: 1,
+                  mainAxisSpacing: 8,
+                ),
+                itemBuilder: (context, index) {
+                  return shopCard(index);
+                },
+              ),
+            ),
+          ),
+        ),
+        floatingActionButton: selectedCount > 0
+            ? Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 16,
+                ),
+                width: double.infinity,
+                child: FloatingActionButton(
+                  elevation: 0.1,
+                  backgroundColor: Theme.of(context).primaryColorLight,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  onPressed: () {},
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Stocks: ${selectedCount}",
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.labelLarge,
+                        ),
+                        Container(
+                          width: 35,
+                          height: 35,
+                          padding: EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100),
+                            color: Colors.white,
+                          ),
+                          child: SvgPicture.asset(
+                            "assets/icons/right-arrow.svg",
+                            width: 24,
+                            height: 24,
+                            colorFilter: const ColorFilter.mode(
+                              Colors.black,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              )
+            : null,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      ),
     );
   }
 }
