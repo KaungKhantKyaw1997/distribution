@@ -41,7 +41,7 @@ class _MyAppState extends State<MyApp> {
       title: 'Distribution',
       theme: ThemeData(
         primaryColor: Color(0xfff4b93f),
-        primaryColorLight: Color(0xffECE7DD),
+        primaryColorLight: Color(0xffF8F3E7),
         primaryColorDark: Color(0xfff4b93f),
         scaffoldBackgroundColor: Color(0xFFF8F8FA),
         textTheme:
