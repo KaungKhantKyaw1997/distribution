@@ -312,27 +312,41 @@ class _StockScreenState extends State<StockScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.only(
-            left: 16,
-            right: 16,
-            top: 24,
-            bottom: 100,
-          ),
-          child: GridView.builder(
-            controller: _scrollController,
-            shrinkWrap: true,
-            itemCount: stocks.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              mainAxisExtent: 80,
-              crossAxisSpacing: 8,
-              crossAxisCount: 1,
-              mainAxisSpacing: 8,
+      body: SmartRefresher(
+        header: WaterDropMaterialHeader(
+          backgroundColor: Theme.of(context).primaryColor,
+          color: Colors.white,
+        ),
+        footer: ClassicFooter(),
+        controller: _refreshController,
+        enablePullDown: true,
+        enablePullUp: true,
+        onRefresh: () async {
+          _refreshController.refreshCompleted();
+        },
+        onLoading: () async {
+          _refreshController.loadComplete();
+        },
+        child: SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 24,
             ),
-            itemBuilder: (context, index) {
-              return shopCard(index);
-            },
+            child: GridView.builder(
+              controller: _scrollController,
+              shrinkWrap: true,
+              itemCount: stocks.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                mainAxisExtent: 80,
+                crossAxisSpacing: 8,
+                crossAxisCount: 1,
+                mainAxisSpacing: 8,
+              ),
+              itemBuilder: (context, index) {
+                return shopCard(index);
+              },
+            ),
           ),
         ),
       ),
