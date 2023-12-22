@@ -93,15 +93,15 @@ class _ShopScreenState extends State<ShopScreen> {
             Container(
               width: 70,
               height: 70,
+              padding: EdgeInsets.all(12),
               decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/logo.png'),
-                  fit: BoxFit.cover,
-                ),
                 borderRadius: BorderRadius.circular(15),
-                border: Border.all(
-                  color: Colors.transparent,
-                ),
+                color: Theme.of(context).primaryColorLight,
+              ),
+              child: SvgPicture.asset(
+                "assets/icons/shop.svg",
+                width: 24,
+                height: 24,
               ),
             ),
             Expanded(
