@@ -1,6 +1,7 @@
 import 'package:distribution/global.dart';
 import 'package:distribution/src/utils/format_amount.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class OrderScreen extends StatefulWidget {
   const OrderScreen({super.key});
@@ -188,61 +189,67 @@ class _OrderScreenState extends State<OrderScreen> {
           borderRadius: BorderRadius.circular(15),
           color: Colors.white,
         ),
-        child: Row(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              width: 70,
-              height: 70,
+              width: double.infinity,
+              height: 130,
+              padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/logo.png'),
-                  fit: BoxFit.cover,
+                  image: AssetImage('assets/images/stock.png'),
+                  fit: BoxFit.contain,
                 ),
                 borderRadius: BorderRadius.circular(15),
-                border: Border.all(
-                  color: Colors.transparent,
+                color: Theme.of(context).primaryColorLight,
+              ),
+              child: Align(
+                alignment: Alignment.topRight,
+                child: CircleAvatar(
+                  radius: 10,
+                  backgroundColor: Colors.white,
+                  child: Text(
+                    '${orders[index]["quantity"]}',
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
                 ),
               ),
             ),
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 4,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            orders[index]["name"].toString(),
-                            overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.labelLarge,
-                          ),
-                        ),
-                        Text(
-                          'x ${orders[index]["quantity"]}',
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.labelLarge,
-                        ),
-                      ],
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 8,
+                      bottom: 4,
                     ),
-                    FormattedAmount(
+                    child: Text(
+                      orders[index]["name"].toString(),
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.labelLarge,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      bottom: 4,
+                    ),
+                    child: FormattedAmount(
                       amount: double.parse(
                           orders[index]["pricing_price"].toString()),
                       mainTextStyle: Theme.of(context).textTheme.labelLarge,
                       decimalTextStyle: Theme.of(context).textTheme.labelLarge,
                     ),
-                    FormattedAmount(
-                      amount: double.parse(orders[index]["price"].toString()),
-                      mainTextStyle: Theme.of(context).textTheme.labelLarge,
-                      decimalTextStyle: Theme.of(context).textTheme.labelLarge,
-                    ),
-                  ],
-                ),
+                  ),
+                  FormattedAmount(
+                    amount: double.parse(orders[index]["price"].toString()),
+                    mainTextStyle: Theme.of(context).textTheme.labelLarge,
+                    decimalTextStyle: Theme.of(context).textTheme.labelLarge,
+                  ),
+                ],
               ),
             ),
           ],
@@ -277,9 +284,9 @@ class _OrderScreenState extends State<OrderScreen> {
             shrinkWrap: true,
             itemCount: orders.length,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              mainAxisExtent: 90,
+              mainAxisExtent: 230,
               crossAxisSpacing: 8,
-              crossAxisCount: 1,
+              crossAxisCount: 2,
               mainAxisSpacing: 8,
             ),
             itemBuilder: (context, index) {
