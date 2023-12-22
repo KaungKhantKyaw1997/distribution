@@ -210,7 +210,9 @@ class _StockScreenState extends State<StockScreen> {
               padding: EdgeInsets.all(12),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
-                color: Theme.of(context).primaryColorLight,
+                color: stocks[index]["selected"]
+                    ? Colors.white
+                    : Theme.of(context).primaryColorLight,
               ),
               child: SvgPicture.asset(
                 "assets/icons/stock.svg",
