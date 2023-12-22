@@ -10,5 +10,5 @@ class ColorConstants {
   static const Color orangeColor = Color(0xFFF9875D);
   static const Color yellowColor = Color(0xFFFFCF44);
   static const Color blueColor = Color(0xFF3D4DDD);
-  static const Color primaryColor = Color(0xfff4b93f);
+  static const Color primaryColor = Color(0xffF7941C);
 }

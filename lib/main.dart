@@ -40,9 +40,9 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       title: 'Distribution',
       theme: ThemeData(
-        primaryColor: Color(0xfff4b93f),
-        primaryColorLight: Color(0xffF8F3E7),
-        primaryColorDark: Color(0xfff4b93f),
+        primaryColor: Color(0xffF7941C),
+        primaryColorLight: Color(0xffFDE9D2),
+        primaryColorDark: Color(0xffF7941C),
         scaffoldBackgroundColor: Color(0xFFF8F8FA),
         textTheme:
             GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme).copyWith(
