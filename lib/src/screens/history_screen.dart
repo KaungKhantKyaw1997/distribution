@@ -1,10 +1,17 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:collection/collection.dart';
+import 'package:dio/dio.dart';
 import 'package:distribution/global.dart';
+import 'package:distribution/routes.dart';
 import 'package:distribution/src/constants/color_constants.dart';
 import 'package:distribution/src/screens/bottombar_screen.dart';
+import 'package:distribution/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class HistoryScreen extends StatefulWidget {
@@ -19,12 +26,95 @@ class _HistoryScreenState extends State<HistoryScreen> {
   TextEditingController search = TextEditingController(text: '');
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
+  List voucherData = [];
   List data = [];
   int page = 1;
   Timer? _debounce;
+  bool _dataLoaded = false;
+  DateTime? startDate = null;
+  DateTime? endDate = null;
+
+  getVouchers() async {
+    try {
+      String fromDate = "";
+      if (startDate != null) {
+        fromDate = DateFormat('yyyy-MM-dd').format(startDate!);
+      }
+      String toDate = "";
+      if (endDate != null) {
+        toDate = DateFormat('yyyy-MM-dd').format(endDate!);
+      }
+      final response = null;
+      _refreshController.refreshCompleted();
+      _refreshController.loadComplete();
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          voucherData = [];
+          data += response["data"];
+          page++;
+
+          final groupedItemsMap = groupBy(data, (item) {
+            return Jiffy.parseFromDateTime(
+                    DateTime.parse(item["created_at"] + "Z").toLocal())
+                .format(pattern: 'dd/MM/yyyy');
+          });
+          groupedItemsMap.forEach((date, items) {
+            voucherData.add({
+              "date": date,
+              "items": items,
+            });
+          });
+        }
+        setState(() {
+          if (voucherData.isEmpty) {
+            _dataLoaded = true;
+          }
+        });
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      _refreshController.refreshCompleted();
+      _refreshController.loadComplete();
+      if (e is DioException &&
+          e.error is SocketException &&
+          !isConnectionTimeout) {
+        isConnectionTimeout = true;
+        Navigator.pushNamed(
+          context,
+          Routes.connection_timeout,
+        );
+        return;
+      }
+      if (e is DioException && e.response != null && e.response!.data != null) {
+        if (e.response!.data["message"] == "invalid token" ||
+            e.response!.data["message"] ==
+                "invalid authorization header format") {
+          Navigator.pushNamed(
+            context,
+            Routes.unauthorized,
+          );
+        } else {
+          ToastUtil.showToast(
+              e.response!.data['code'], e.response!.data['message']);
+        }
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getVouchers();
+  }
 
   @override
   Widget build(BuildContext context) {
+    String currentDate =
+        DateFormat("dd/MM/yyyy").format(DateTime.now()).toString();
+    String yesterdayDate = DateFormat("dd/MM/yyyy")
+        .format(DateTime.now().subtract(const Duration(days: 1)))
+        .toString();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -75,6 +165,147 @@ class _HistoryScreenState extends State<HistoryScreen> {
             onPressed: () {},
           ),
         ],
+      ),
+      body: SmartRefresher(
+        header: WaterDropMaterialHeader(
+          backgroundColor: Theme.of(context).primaryColor,
+          color: Colors.white,
+        ),
+        footer: ClassicFooter(),
+        controller: _refreshController,
+        enablePullDown: true,
+        enablePullUp: true,
+        onRefresh: () async {
+          page = 1;
+          data = [];
+          await getVouchers();
+        },
+        onLoading: () async {
+          await getVouchers();
+        },
+        child: voucherData.isNotEmpty
+            ? SingleChildScrollView(
+                child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 24,
+                ),
+                width: double.infinity,
+                child: ListView.builder(
+                  controller: _scrollController,
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemCount: voucherData.length,
+                  itemBuilder: (context, index) {
+                    String date = voucherData[index]["date"];
+                    return Container(
+                        margin: const EdgeInsets.only(
+                          bottom: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.white,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: 16,
+                                right: 16,
+                                top: 8,
+                                bottom: 4,
+                              ),
+                              child: Text(
+                                currentDate == date
+                                    ? "Today"
+                                    : yesterdayDate == date
+                                        ? "Yesterday"
+                                        : date,
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                            ),
+                            const Divider(
+                              height: 0,
+                              thickness: 0.2,
+                              color: Colors.grey,
+                            ),
+                            ListView.builder(
+                                controller: _scrollController,
+                                scrollDirection: Axis.vertical,
+                                shrinkWrap: true,
+                                itemCount: voucherData[index]["items"].length,
+                                itemBuilder: (context, i) {
+                                  return GestureDetector(
+                                    onTap: () async {
+                                      await Navigator.pushNamedAndRemoveUntil(
+                                          context,
+                                          Routes.language,
+                                          arguments: {
+                                            "voucher_id": voucherData[index]
+                                                ["items"][i]["voucher_id"],
+                                            "customer_name": voucherData[index]
+                                                    ["customer_name"][i]
+                                                ["user_name"],
+                                            "customer_name": voucherData[index]
+                                                ["items"][i]["phone"],
+                                            "email": voucherData[index]["items"]
+                                                [i]["email"],
+                                          },
+                                          (route) => false);
+                                    },
+                                  );
+                                })
+                          ],
+                        ));
+                  },
+                ),
+              ))
+            : _dataLoaded
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset(
+                          "assets/icons/empty_history.svg",
+                          width: 120,
+                          height: 120,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                            top: 16,
+                            bottom: 10,
+                          ),
+                          child: Text(
+                            "Empty History",
+                            textAlign: TextAlign.center,
+                            style: MediaQuery.of(context).orientation ==
+                                    Orientation.landscape
+                                ? Theme.of(context).textTheme.bodyLarge
+                                : Theme.of(context).textTheme.bodyLarge,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                          ),
+                          child: Text(
+                            "There is no data...",
+                            textAlign: TextAlign.center,
+                            style: MediaQuery.of(context).orientation ==
+                                    Orientation.landscape
+                                ? Theme.of(context).textTheme.bodyLarge
+                                : Theme.of(context).textTheme.bodyLarge,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : Container(),
       ),
       bottomNavigationBar: const BottomBarScreen(),
     );

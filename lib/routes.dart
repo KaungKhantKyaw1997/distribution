@@ -9,6 +9,8 @@ import 'package:distribution/src/screens/stock_screen.dart';
 import 'package:flutter/material.dart';
 
 class Routes {
+  static const String connection_timeout = "/connection_timeout";
+  static const String unauthorized = "/unauthorized";
   static const String splash = '/splash';
   static const String login = '/login';
   static const String shop = '/shop';
