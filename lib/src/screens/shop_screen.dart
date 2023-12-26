@@ -7,6 +7,7 @@ import 'package:distribution/src/screens/bottombar_screen.dart';
 import 'package:distribution/src/widgets/multi_select_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class ShopScreen extends StatefulWidget {
@@ -163,6 +164,17 @@ class _ShopScreenState extends State<ShopScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  Container(
+                    margin: const EdgeInsets.only(
+                      top: 8,
+                    ),
+                    width: 40,
+                    height: 5,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      color: Colors.grey,
+                    ),
+                  ),
                   Padding(
                     padding: const EdgeInsets.all(
                       16,
@@ -182,26 +194,33 @@ class _ShopScreenState extends State<ShopScreen> {
                           },
                           child: Text(
                             language["Reset"] ?? "Reset",
-                            style: Theme.of(context).textTheme.labelSmall,
+                            style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: Theme.of(context).primaryColor,
+                            ),
                           ),
                         ),
                         Text(
                           language["Filters"] ?? "Filters",
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
-                        IconButton(
-                          icon: Icon(
-                            Icons.close,
-                            size: 22,
-                            color: Colors.grey,
-                          ),
-                          onPressed: () {
+                        GestureDetector(
+                          onTap: () {
                             Navigator.of(context).pop();
                             if (!isApply) {
                               selectedDays = [];
                               setState(() {});
                             }
                           },
+                          child: Text(
+                            language["Close"] ?? "Close",
+                            style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          ),
                         ),
                       ],
                     ),
