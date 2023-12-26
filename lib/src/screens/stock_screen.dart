@@ -33,6 +33,27 @@ class _StockScreenState extends State<StockScreen> {
     'Friday',
     'Saturday',
     'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
   ];
   List<String> selectedDays = [];
 
@@ -178,73 +199,75 @@ class _StockScreenState extends State<StockScreen> {
               StatefulBuilder(
                 builder: (context, setState) {
                   return Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 16,
-                              right: 16,
-                              bottom: 8,
-                            ),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                language["Categories"] ?? "Categories",
-                                style: Theme.of(context).textTheme.titleLarge,
+                    child: Scrollbar(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: 16,
+                                right: 16,
+                                bottom: 8,
+                              ),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  language["Categories"] ?? "Categories",
+                                  style: Theme.of(context).textTheme.titleLarge,
+                                ),
                               ),
                             ),
-                          ),
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.only(
-                              left: 16,
-                              right: 16,
-                            ),
-                            child: MultiSelectChip(
-                              days,
-                              selectedDays,
-                              onSelectionChanged: (selectedList) {
-                                setState(() {
-                                  selectedDays = selectedList;
-                                });
-                              },
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              top: 16,
-                              left: 16,
-                              right: 16,
-                              bottom: 8,
-                            ),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                language["Brands"] ?? "Brands",
-                                style: Theme.of(context).textTheme.titleLarge,
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.only(
+                                left: 16,
+                                right: 16,
+                              ),
+                              child: MultiSelectChip(
+                                days,
+                                selectedDays,
+                                onSelectionChanged: (selectedList) {
+                                  setState(() {
+                                    selectedDays = selectedList;
+                                  });
+                                },
                               ),
                             ),
-                          ),
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.only(
-                              left: 16,
-                              right: 16,
-                              bottom: 16,
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                top: 16,
+                                left: 16,
+                                right: 16,
+                                bottom: 8,
+                              ),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  language["Brands"] ?? "Brands",
+                                  style: Theme.of(context).textTheme.titleLarge,
+                                ),
+                              ),
                             ),
-                            child: MultiSelectChip(
-                              days,
-                              selectedDays,
-                              onSelectionChanged: (selectedList) {
-                                setState(() {
-                                  selectedDays = selectedList;
-                                });
-                              },
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.only(
+                                left: 16,
+                                right: 16,
+                                bottom: 16,
+                              ),
+                              child: MultiSelectChip(
+                                days,
+                                selectedDays,
+                                onSelectionChanged: (selectedList) {
+                                  setState(() {
+                                    selectedDays = selectedList;
+                                  });
+                                },
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   );
