@@ -466,7 +466,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                   onTap: () async {
                                     await Navigator.pushNamedAndRemoveUntil(
                                       context,
-                                      Routes.language,
+                                      Routes.voucher_details,
                                       arguments: {
                                         "voucher_id": vouchers[index]["items"]
                                             [i]["voucher_id"],
