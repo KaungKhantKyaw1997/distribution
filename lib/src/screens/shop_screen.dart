@@ -34,7 +34,7 @@ class _ShopScreenState extends State<ShopScreen> {
     'Thursday',
     'Friday',
     'Saturday',
-    'Sunday'
+    'Sunday',
   ];
   List<String> selectedDays = [];
 
@@ -149,6 +149,7 @@ class _ShopScreenState extends State<ShopScreen> {
     showModalBottomSheet(
       context: context,
       isDismissible: false,
+      isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
         return StatefulBuilder(
@@ -244,6 +245,7 @@ class _ShopScreenState extends State<ShopScreen> {
                     padding: const EdgeInsets.only(
                       left: 16,
                       right: 16,
+                      bottom: 16,
                     ),
                     child: MultiSelectChip(
                       days,
@@ -257,7 +259,6 @@ class _ShopScreenState extends State<ShopScreen> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(
-                      top: 16,
                       bottom: 8,
                     ),
                     child: Divider(

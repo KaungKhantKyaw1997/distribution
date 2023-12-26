@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:distribution/global.dart';
 import 'package:distribution/routes.dart';
 import 'package:distribution/src/constants/color_constants.dart';
+import 'package:distribution/src/widgets/multi_select_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class StockScreen extends StatefulWidget {
@@ -23,6 +25,16 @@ class _StockScreenState extends State<StockScreen> {
   List data = [];
   int page = 1;
   Timer? _debounce;
+  List<String> days = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
+  ];
+  List<String> selectedDays = [];
 
   List stocks = [
     {
@@ -85,92 +97,201 @@ class _StockScreenState extends State<StockScreen> {
     showModalBottomSheet(
       context: context,
       isDismissible: false,
+      isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
+        return Container(
+          margin: EdgeInsets.only(
+            top: 70,
+          ),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                margin: const EdgeInsets.only(
+                  top: 8,
+                ),
+                width: 40,
+                height: 5,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  color: Colors.grey,
                 ),
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(
-                      16,
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).pop();
-                            data = [];
-                            page = 1;
-                            isApply = false;
-                          },
-                          child: Text(
-                            language["Reset"] ?? "Reset",
-                            style: Theme.of(context).textTheme.labelSmall,
-                          ),
-                        ),
-                        Text(
-                          language["Filters"] ?? "Filters",
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
-                        IconButton(
-                          icon: Icon(
-                            Icons.close,
-                            size: 22,
-                          ),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            if (!isApply) {}
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      bottom: 32,
-                    ),
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 12,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        backgroundColor: Theme.of(context).primaryColor,
-                      ),
-                      onPressed: () async {
+              Padding(
+                padding: const EdgeInsets.all(
+                  16,
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
                         Navigator.of(context).pop();
+                        selectedDays = [];
                         data = [];
                         page = 1;
-                        isApply = true;
+                        isApply = false;
+                        setState(() {});
                       },
                       child: Text(
-                        language["Apply"] ?? "Apply",
-                        style: Theme.of(context).textTheme.bodyMedium,
+                        language["Reset"] ?? "Reset",
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: Theme.of(context).primaryColor,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                    Text(
+                      language["Filters"] ?? "Filters",
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        if (!isApply) {
+                          selectedDays = [];
+                          setState(() {});
+                        }
+                      },
+                      child: Text(
+                        language["Close"] ?? "Close",
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            );
-          },
+              StatefulBuilder(
+                builder: (context, setState) {
+                  return Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 16,
+                              right: 16,
+                              bottom: 8,
+                            ),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                language["Categories"] ?? "Categories",
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.only(
+                              left: 16,
+                              right: 16,
+                            ),
+                            child: MultiSelectChip(
+                              days,
+                              selectedDays,
+                              onSelectionChanged: (selectedList) {
+                                setState(() {
+                                  selectedDays = selectedList;
+                                });
+                              },
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: 16,
+                              left: 16,
+                              right: 16,
+                              bottom: 8,
+                            ),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                language["Brands"] ?? "Brands",
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.only(
+                              left: 16,
+                              right: 16,
+                              bottom: 16,
+                            ),
+                            child: MultiSelectChip(
+                              days,
+                              selectedDays,
+                              onSelectionChanged: (selectedList) {
+                                setState(() {
+                                  selectedDays = selectedList;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                  bottom: 8,
+                ),
+                child: Divider(
+                  height: 0,
+                  color: Colors.grey,
+                  thickness: 0.2,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  bottom: 32,
+                ),
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    backgroundColor: Theme.of(context).primaryColor,
+                  ),
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    data = [];
+                    page = 1;
+                    isApply = true;
+                  },
+                  child: Text(
+                    language["Apply"] ?? "Apply",
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ),
+              ),
+            ],
+          ),
         );
       },
     );
