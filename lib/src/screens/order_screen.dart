@@ -45,6 +45,7 @@ class _OrderScreenState extends State<OrderScreen> {
     showModalBottomSheet(
       context: context,
       isDismissible: false,
+      isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
         return StatefulBuilder(
@@ -60,82 +61,122 @@ class _OrderScreenState extends State<OrderScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  Container(
+                    margin: const EdgeInsets.only(
+                      top: 8,
+                    ),
+                    width: 40,
+                    height: 5,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      color: Colors.grey,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(
+                      16,
+                    ),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        orders[index]["name"].toString(),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.labelLarge,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: FormattedAmount(
+                            amount: double.parse(
+                                orders[index]["pricing_price"].toString()),
+                            mainTextStyle:
+                                Theme.of(context).textTheme.labelLarge,
+                            decimalTextStyle:
+                                Theme.of(context).textTheme.labelLarge,
+                          ),
+                        ),
+                        FormattedAmount(
+                          amount:
+                              double.parse(orders[index]["price"].toString()),
+                          mainTextStyle: Theme.of(context).textTheme.labelLarge,
+                          decimalTextStyle:
+                              Theme.of(context).textTheme.labelLarge,
+                        ),
+                      ],
+                    ),
+                  ),
                   Padding(
                     padding: const EdgeInsets.all(
                       16,
                     ),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Container(
-                          width: 70,
-                          height: 70,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage('assets/images/logo.png'),
-                              fit: BoxFit.cover,
+                        CircleAvatar(
+                          radius: 16,
+                          backgroundColor: Theme.of(context).primaryColorLight,
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.remove,
+                              size: 16,
+                              color: Colors.black,
                             ),
-                            borderRadius: BorderRadius.circular(15),
-                            border: Border.all(
-                              color: Colors.transparent,
-                            ),
+                            onPressed: () {
+                              if (orders[index]['quantity'] > 1) {
+                                orders[index]['quantity']--;
+                                setState(() {});
+                              }
+                            },
                           ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            CircleAvatar(
-                              radius: 16,
-                              backgroundColor:
-                                  Theme.of(context).primaryColorLight,
-                              child: IconButton(
-                                icon: Icon(
-                                  Icons.remove,
-                                  size: 16,
-                                  color: Colors.black,
-                                ),
-                                onPressed: () {
-                                  if (orders[index]['quantity'] > 1) {
-                                    orders[index]['quantity']--;
-                                    setState(() {});
-                                  }
-                                },
-                              ),
+                        Container(
+                          margin: EdgeInsets.symmetric(
+                            horizontal: 8,
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8,
+                          ),
+                          child: Text(
+                            orders[index]['quantity'].toString(),
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                        ),
+                        CircleAvatar(
+                          radius: 16,
+                          backgroundColor: Theme.of(context).primaryColorLight,
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.add,
+                              size: 16,
+                              color: Colors.black,
                             ),
-                            Container(
-                              margin: EdgeInsets.symmetric(
-                                horizontal: 8,
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 8,
-                              ),
-                              child: Text(
-                                orders[index]['quantity'].toString(),
-                                textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.bodyLarge,
-                              ),
-                            ),
-                            CircleAvatar(
-                              radius: 16,
-                              backgroundColor:
-                                  Theme.of(context).primaryColorLight,
-                              child: IconButton(
-                                icon: Icon(
-                                  Icons.add,
-                                  size: 16,
-                                  color: Colors.black,
-                                ),
-                                onPressed: () {
-                                  orders[index]['quantity']++;
-                                  setState(() {});
-                                },
-                              ),
-                            ),
-                          ],
+                            onPressed: () {
+                              orders[index]['quantity']++;
+                              setState(() {});
+                            },
+                          ),
                         ),
                       ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      bottom: 8,
+                    ),
+                    child: Divider(
+                      height: 0,
+                      color: Colors.grey,
+                      thickness: 0.2,
                     ),
                   ),
                   Container(
