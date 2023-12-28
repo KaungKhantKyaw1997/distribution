@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:distribution/global.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LanguageScreen extends StatefulWidget {
@@ -66,55 +67,138 @@ class _LanguageScreenState extends State<LanguageScreen> {
             horizontal: 16,
             vertical: 24,
           ),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(15),
-          ),
           child: Column(
             children: [
-              ListTile(
-                title: Text(
-                  language["English"] ?? "English",
-                  style: Theme.of(context).textTheme.labelLarge,
-                ),
-                trailing: Icon(
-                  Icons.done,
-                  color: selectedLangIndex == 0
-                      ? Theme.of(context).primaryColor
-                      : Colors.white,
-                  size: 24,
-                ),
-                onTap: () async {
+              GestureDetector(
+                onTap: () {
                   selectedLangIndex = 0;
                   changeLanguage("eng");
                 },
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: selectedLangIndex == 0
+                        ? Theme.of(context).primaryColorLight
+                        : Colors.white,
+                    border: Border.all(
+                      color: selectedLangIndex == 0
+                          ? Theme.of(context).primaryColor
+                          : Colors.white,
+                      width: 1.0,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 4,
+                          ),
+                          child: Text(
+                            language["English"] ?? "English",
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.labelLarge,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: 20,
+                        height: 20,
+                        padding: EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                          color: Colors.white,
+                          border: Border.all(
+                            color: selectedLangIndex == 0
+                                ? Theme.of(context).primaryColor
+                                : Colors.grey,
+                            width: 1.0,
+                          ),
+                        ),
+                        child: selectedLangIndex == 0
+                            ? SvgPicture.asset(
+                                "assets/icons/check.svg",
+                                colorFilter: ColorFilter.mode(
+                                  Theme.of(context).primaryColor,
+                                  BlendMode.srcIn,
+                                ),
+                              )
+                            : null,
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 16,
-                ),
-                child: Divider(
-                  height: 0,
-                  color: Colors.grey,
-                  thickness: 0.2,
-                ),
+              SizedBox(
+                height: 8,
               ),
-              ListTile(
-                title: Text(
-                  language["Myanmar"] ?? "Myanmar",
-                  style: Theme.of(context).textTheme.labelLarge,
-                ),
-                trailing: Icon(
-                  Icons.done,
-                  color: selectedLangIndex == 1
-                      ? Theme.of(context).primaryColor
-                      : Colors.white,
-                  size: 24,
-                ),
-                onTap: () async {
+              GestureDetector(
+                onTap: () {
                   selectedLangIndex = 1;
                   changeLanguage("mm");
                 },
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: selectedLangIndex == 1
+                        ? Theme.of(context).primaryColorLight
+                        : Colors.white,
+                    border: Border.all(
+                      color: selectedLangIndex == 1
+                          ? Theme.of(context).primaryColor
+                          : Colors.white,
+                      width: 1.0,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 4,
+                          ),
+                          child: Text(
+                            language["Myanmar"] ?? "Myanmar",
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.labelLarge,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: 20,
+                        height: 20,
+                        padding: EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                          color: Colors.white,
+                          border: Border.all(
+                            color: selectedLangIndex == 1
+                                ? Theme.of(context).primaryColor
+                                : Colors.grey,
+                            width: 1.0,
+                          ),
+                        ),
+                        child: selectedLangIndex == 1
+                            ? SvgPicture.asset(
+                                "assets/icons/check.svg",
+                                colorFilter: ColorFilter.mode(
+                                  Theme.of(context).primaryColor,
+                                  BlendMode.srcIn,
+                                ),
+                              )
+                            : null,
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),

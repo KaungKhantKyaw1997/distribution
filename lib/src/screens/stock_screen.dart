@@ -319,13 +319,13 @@ class _StockScreenState extends State<StockScreen> {
     );
   }
 
-  shopCard(index) {
+  stockCard(index) {
     return GestureDetector(
       onTap: () {
         setState(() {
           stocks[index]["selected"] = !stocks[index]["selected"];
           selectedCount =
-              stocks.where((shop) => shop['selected'] == true).length;
+              stocks.where((stock) => stock['selected'] == true).length;
         });
       },
       child: Container(
@@ -509,7 +509,7 @@ class _StockScreenState extends State<StockScreen> {
                   mainAxisSpacing: 8,
                 ),
                 itemBuilder: (context, index) {
-                  return shopCard(index);
+                  return stockCard(index);
                 },
               ),
             ),
