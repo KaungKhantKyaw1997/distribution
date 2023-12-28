@@ -13,16 +13,16 @@ class _OrderScreenState extends State<OrderScreen> {
   final ScrollController _scrollController = ScrollController();
   List orders = [
     {
-      "name": "Stock 1",
-      "quantity": 1,
+      "name": "Deleaf Moisturizing Gel Pomegrat e Sachet 6g",
+      "quantity": 5,
       "unit": "PCS",
       "pricing_price": 1000,
       "price": 1000,
       "discount": 0,
     },
     {
-      "name": "Stock 2",
-      "quantity": 1,
+      "name": "Cute Press 1-2 Beautiful Airy Matte Liquid foundation 03 Sand",
+      "quantity": 10,
       "unit": "CT",
       "pricing_price": 1000,
       "price": 5000,
@@ -186,70 +186,62 @@ class _OrderScreenState extends State<OrderScreen> {
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
-          color: Colors.white,
+          color: Theme.of(context).primaryColorLight,
+          border: Border.all(
+            color: Theme.of(context).primaryColorLight,
+            width: 1.0,
+          ),
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: double.infinity,
-              height: 130,
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/stock.png'),
-                  fit: BoxFit.contain,
-                ),
-                borderRadius: BorderRadius.circular(15),
-                color: Theme.of(context).primaryColorLight,
-              ),
-              child: Align(
-                alignment: Alignment.topRight,
-                child: CircleAvatar(
-                  radius: 10,
-                  backgroundColor: Colors.white,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
                   child: Text(
-                    '${orders[index]["quantity"]}',
+                    orders[index]["name"].toString(),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.labelLarge,
                   ),
                 ),
-              ),
-            ),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      top: 8,
-                      bottom: 4,
-                    ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 4,
+                  ),
+                  child: CircleAvatar(
+                    radius: 15,
+                    backgroundColor: Colors.white,
                     child: Text(
-                      orders[index]["name"].toString(),
-                      overflow: TextOverflow.ellipsis,
+                      '${orders[index]["quantity"]}',
                       style: Theme.of(context).textTheme.labelLarge,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      bottom: 4,
-                    ),
-                    child: FormattedAmount(
-                      amount: double.parse(
-                          orders[index]["pricing_price"].toString()),
-                      mainTextStyle: Theme.of(context).textTheme.labelLarge,
-                      decimalTextStyle: Theme.of(context).textTheme.labelLarge,
-                    ),
-                  ),
-                  FormattedAmount(
-                    amount: double.parse(orders[index]["price"].toString()),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 8,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: FormattedAmount(
+                    amount:
+                        double.parse(orders[index]["pricing_price"].toString()),
                     mainTextStyle: Theme.of(context).textTheme.labelLarge,
                     decimalTextStyle: Theme.of(context).textTheme.labelLarge,
                   ),
-                ],
-              ),
+                ),
+                FormattedAmount(
+                  amount: double.parse(orders[index]["price"].toString()),
+                  mainTextStyle: Theme.of(context).textTheme.labelLarge,
+                  decimalTextStyle: Theme.of(context).textTheme.labelLarge,
+                ),
+              ],
             ),
           ],
         ),
@@ -283,9 +275,9 @@ class _OrderScreenState extends State<OrderScreen> {
             shrinkWrap: true,
             itemCount: orders.length,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              mainAxisExtent: 230,
+              mainAxisExtent: 100,
               crossAxisSpacing: 8,
-              crossAxisCount: 2,
+              crossAxisCount: 1,
               mainAxisSpacing: 8,
             ),
             itemBuilder: (context, index) {

@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class FormattedAmount extends StatelessWidget {
+  final String symbol;
   final double amount;
   final TextStyle? mainTextStyle;
   final TextStyle? decimalTextStyle;
 
   const FormattedAmount({
     super.key,
+    this.symbol = 'Ks',
     required this.amount,
     required this.mainTextStyle,
     required this.decimalTextStyle,
@@ -26,6 +28,9 @@ class FormattedAmount extends StatelessWidget {
       text: TextSpan(
         style: mainTextStyle,
         children: [
+          TextSpan(
+            text: '${symbol} ',
+          ),
           TextSpan(
             text: mainPart.isEmpty ? "0" : mainPart,
           ),
