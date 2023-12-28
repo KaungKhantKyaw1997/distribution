@@ -12,6 +12,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -125,29 +126,41 @@ class _HistoryScreenState extends State<HistoryScreen> {
   // }
   void _openRangeDatePicker(BuildContext context) {
     BottomPicker.range(
-      title: 'Set date range',
+      title: 'Date Range',
+      titleStyle: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w400,
+        color: Colors.black,
+      ),
       description: 'Please select a first date and an end date',
+      descriptionStyle: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+        color: Colors.grey,
+      ),
       dateOrder: DatePickerDateOrder.dmy,
       minFirstDate: DateTime.now(),
       initialFirstDate: DateTime.now().add(Duration(days: 1)),
-      pickerTextStyle: TextStyle(
-        color: Colors.black,
-        fontWeight: FontWeight.bold,
-        fontSize: 12,
-      ),
-      titleStyle: TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 15,
-        color: Colors.black,
-      ),
-      descriptionStyle: TextStyle(
+      pickerTextStyle: GoogleFonts.poppins(
+        fontSize: 10,
+        fontWeight: FontWeight.w400,
         color: Colors.black,
       ),
       onRangeDateSubmitPressed: (firstDate, secondDate) {
         print(firstDate);
         print(secondDate);
       },
-      bottomPickerTheme: BottomPickerTheme.plumPlate,
+      buttonText: 'Apply',
+      buttonTextStyle: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w400,
+        color: Colors.white,
+      ),
+      displayButtonIcon: false,
+      buttonSingleColor: Theme.of(context).primaryColor,
+      buttonWidth: 320,
+      buttonAlignment: MainAxisAlignment.center,
+      buttonTextAlignment: MainAxisAlignment.center,
     ).show(context);
   }
 
