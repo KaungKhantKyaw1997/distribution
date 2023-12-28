@@ -147,8 +147,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
         color: Colors.black,
       ),
       onRangeDateSubmitPressed: (firstDate, secondDate) {
-        print(firstDate);
-        print(secondDate);
+        startDate = firstDate;
+        endDate = secondDate;
+        dateRange.text =
+            '${DateFormat('dd-MM-yyyy').format(startDate!)} - ${DateFormat('dd-MM-yyyy').format(endDate!)}';
       },
       buttonText: 'Apply',
       buttonTextStyle: TextStyle(
@@ -158,7 +160,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
       ),
       displayButtonIcon: false,
       buttonSingleColor: Theme.of(context).primaryColor,
-      buttonWidth: 320,
+      buttonWidth: 100,
       buttonAlignment: MainAxisAlignment.center,
       buttonTextAlignment: MainAxisAlignment.center,
     ).show(context);
@@ -258,7 +260,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     child: TextFormField(
                       controller: dateRange,
                       readOnly: true,
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: Theme.of(context).textTheme.bodySmall,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: ColorConstants.fillColor,
@@ -356,7 +358,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       },
                       child: Text(
                         language["Apply"] ?? "Apply",
-                        style: Theme.of(context).textTheme.labelSmall,
+                        style: Theme.of(context).textTheme.labelMedium,
                       ),
                     ),
                   ),
