@@ -1,11 +1,14 @@
 import 'dart:async';
 
+import 'package:bottom_picker/bottom_picker.dart';
+import 'package:bottom_picker/resources/arrays.dart';
 import 'package:distribution/global.dart';
 import 'package:distribution/routes.dart';
 import 'package:distribution/src/constants/color_constants.dart';
 import 'package:distribution/src/screens/bottombar_screen.dart';
 import 'package:distribution/src/services/voucher_service.dart';
 import 'package:distribution/src/utils/format_amount.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
@@ -120,6 +123,33 @@ class _HistoryScreenState extends State<HistoryScreen> {
   //     },
   //   );
   // }
+  void _openRangeDatePicker(BuildContext context) {
+    BottomPicker.range(
+      title: 'Set date range',
+      description: 'Please select a first date and an end date',
+      dateOrder: DatePickerDateOrder.dmy,
+      minFirstDate: DateTime.now(),
+      initialFirstDate: DateTime.now().add(Duration(days: 1)),
+      pickerTextStyle: TextStyle(
+        color: Colors.black,
+        fontWeight: FontWeight.bold,
+        fontSize: 12,
+      ),
+      titleStyle: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 15,
+        color: Colors.black,
+      ),
+      descriptionStyle: TextStyle(
+        color: Colors.black,
+      ),
+      onRangeDateSubmitPressed: (firstDate, secondDate) {
+        print(firstDate);
+        print(secondDate);
+      },
+      bottomPickerTheme: BottomPickerTheme.plumPlate,
+    ).show(context);
+  }
 
   void _showFilterBottomSheet(BuildContext context) {
     showModalBottomSheet(
@@ -236,7 +266,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             horizontal: 16,
                           ),
                           onPressed: () {
-                            // _selectDateRange(context);
+                            _openRangeDatePicker(context);
                           },
                           icon: SvgPicture.asset(
                             "assets/icons/calendar.svg",

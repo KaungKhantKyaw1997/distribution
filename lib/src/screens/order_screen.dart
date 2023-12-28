@@ -1,7 +1,6 @@
 import 'package:distribution/global.dart';
 import 'package:distribution/src/utils/format_amount.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 
 class OrderScreen extends StatefulWidget {
   const OrderScreen({super.key});
