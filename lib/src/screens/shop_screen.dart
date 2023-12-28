@@ -7,7 +7,6 @@ import 'package:distribution/src/screens/bottombar_screen.dart';
 import 'package:distribution/src/widgets/multi_select_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class ShopScreen extends StatefulWidget {
@@ -195,7 +194,7 @@ class _ShopScreenState extends State<ShopScreen> {
                           },
                           child: Text(
                             language["Reset"] ?? "Reset",
-                            style: GoogleFonts.poppins(
+                            style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
                               color: Theme.of(context).primaryColor,
@@ -216,7 +215,7 @@ class _ShopScreenState extends State<ShopScreen> {
                           },
                           child: Text(
                             language["Close"] ?? "Close",
-                            style: GoogleFonts.poppins(
+                            style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
                               color: Theme.of(context).primaryColor,

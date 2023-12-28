@@ -6,7 +6,6 @@ import 'package:distribution/src/constants/color_constants.dart';
 import 'package:distribution/src/widgets/multi_select_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class StockScreen extends StatefulWidget {
@@ -165,7 +164,7 @@ class _StockScreenState extends State<StockScreen> {
                       },
                       child: Text(
                         language["Reset"] ?? "Reset",
-                        style: GoogleFonts.poppins(
+                        style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
                           color: Theme.of(context).primaryColor,
@@ -186,7 +185,7 @@ class _StockScreenState extends State<StockScreen> {
                       },
                       child: Text(
                         language["Close"] ?? "Close",
-                        style: GoogleFonts.poppins(
+                        style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
                           color: Theme.of(context).primaryColor,
