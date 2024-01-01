@@ -2,12 +2,14 @@ import 'package:distribution/global.dart';
 import 'package:distribution/routes.dart';
 import 'package:distribution/src/constants/color_constants.dart';
 import 'package:distribution/src/providers/bottom_provider.dart';
+import 'package:distribution/src/services/api_service.dart';
 import 'package:distribution/src/utils/loading.dart';
 import 'package:distribution/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LogInScreen extends StatefulWidget {
   const LogInScreen({super.key});
@@ -17,6 +19,7 @@ class LogInScreen extends StatefulWidget {
 }
 
 class _LogInScreenState extends State<LogInScreen> {
+  final apiService = ApiService();
   final storage = FlutterSecureStorage();
   TextEditingController userid = TextEditingController(text: '');
   FocusNode _userIDFocusNode = FocusNode();
@@ -61,14 +64,36 @@ class _LogInScreenState extends State<LogInScreen> {
   }
 
   login() async {
-    BottomProvider bottomProvider =
-        Provider.of<BottomProvider>(context, listen: false);
-    bottomProvider.selectIndex(1);
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      Routes.dashboard,
-      (route) => false,
-    );
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final response = await apiService.post(
+        'api/auth/login',
+        data: {
+          'username': userid.text,
+          'password': password.text,
+        },
+      );
+      if (response!["code"] == 200) {
+        prefs.setString("name", response["name"]);
+        prefs.setString("role", response["role"]);
+        await storage.write(key: "token", value: response["token"]);
+
+        BottomProvider bottomProvider =
+            Provider.of<BottomProvider>(context, listen: false);
+        bottomProvider.selectIndex(1);
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          Routes.dashboard,
+          (route) => false,
+        );
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      print('Error: $e');
+      Navigator.pop(context);
+    }
   }
 
   @override

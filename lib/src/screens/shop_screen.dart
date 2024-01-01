@@ -4,6 +4,7 @@ import 'package:distribution/global.dart';
 import 'package:distribution/routes.dart';
 import 'package:distribution/src/constants/color_constants.dart';
 import 'package:distribution/src/screens/bottombar_screen.dart';
+import 'package:distribution/src/screens/drawer_screen.dart';
 import 'package:distribution/src/widgets/multi_select_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -360,6 +361,22 @@ class _ShopScreenState extends State<ShopScreen> {
               });
             },
           ),
+          leading: Builder(
+            builder: (context) => IconButton(
+              icon: SvgPicture.asset(
+                "assets/icons/menu.svg",
+                width: 24,
+                height: 24,
+                colorFilter: const ColorFilter.mode(
+                  Colors.black,
+                  BlendMode.srcIn,
+                ),
+              ),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            ),
+          ),
           actions: [
             IconButton(
               icon: SvgPicture.asset(
@@ -377,6 +394,7 @@ class _ShopScreenState extends State<ShopScreen> {
             ),
           ],
         ),
+        drawer: DrawerScreen(),
         body: SmartRefresher(
           header: WaterDropMaterialHeader(
             backgroundColor: Theme.of(context).primaryColor,
@@ -415,7 +433,7 @@ class _ShopScreenState extends State<ShopScreen> {
             ),
           ),
         ),
-        bottomNavigationBar: const BottomBarScreen(),
+        bottomNavigationBar: BottomBarScreen(),
       ),
     );
   }
