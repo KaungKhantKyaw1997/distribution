@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:distribution/global.dart';
 import 'package:distribution/routes.dart';
 import 'package:distribution/src/constants/color_constants.dart';
+import 'package:distribution/src/services/api_service.dart';
+import 'package:distribution/src/utils/toast.dart';
 import 'package:distribution/src/widgets/multi_select_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -16,36 +18,22 @@ class StockScreen extends StatefulWidget {
 }
 
 class _StockScreenState extends State<StockScreen> {
+  final apiService = ApiService();
   final ScrollController _scrollController = ScrollController();
   TextEditingController search = TextEditingController(text: '');
   FocusNode _searchFocusNode = FocusNode();
+  TextEditingController searchBrand = TextEditingController(text: '');
+  FocusNode _searchBrandFocusNode = FocusNode();
+  TextEditingController searchCategory = TextEditingController(text: '');
+  FocusNode _searchCategoryFocusNode = FocusNode();
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
   List data = [];
   int page = 1;
   Timer? _debounce;
+  Timer? _debounceBrand;
+  Timer? _debounceCategory;
   List<String> days = [
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday',
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday',
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday',
     'Monday',
     'Tuesday',
     'Wednesday',
@@ -55,55 +43,16 @@ class _StockScreenState extends State<StockScreen> {
     'Sunday',
   ];
   List<String> selectedDays = [];
-
-  List stocks = [
-    {
-      "name": "Stock 1",
-      "selected": false,
-    },
-    {
-      "name": "Stock 2",
-      "selected": false,
-    },
-    {
-      "name": "Stock 3",
-      "selected": false,
-    },
-    {
-      "name": "Stock 4",
-      "selected": false,
-    },
-    {
-      "name": "Stock 5",
-      "selected": false,
-    },
-    {
-      "name": "Stock 6",
-      "selected": false,
-    },
-    {
-      "name": "Stock 7",
-      "selected": false,
-    },
-    {
-      "name": "Stock 8",
-      "selected": false,
-    },
-    {
-      "name": "Stock 9",
-      "selected": false,
-    },
-    {
-      "name": "Stock 10",
-      "selected": false,
-    }
-  ];
+  List products = [];
   int selectedCount = 0;
   bool isApply = false;
 
   @override
   void initState() {
     super.initState();
+    getBrands();
+    getCategories();
+    getProducts();
   }
 
   @override
@@ -111,6 +60,80 @@ class _StockScreenState extends State<StockScreen> {
     _scrollController.dispose();
     _searchFocusNode.dispose();
     super.dispose();
+  }
+
+  getBrands() async {
+    try {
+      final response = await apiService.get(
+        'api/brands',
+        params: {
+          'page': page,
+          'per_page': 999999999,
+          'search': search.text,
+        },
+      );
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {}
+        setState(() {});
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      _refreshController.refreshCompleted();
+      _refreshController.loadComplete();
+    }
+  }
+
+  getCategories() async {
+    try {
+      final response = await apiService.get(
+        'api/categories',
+        params: {
+          'page': page,
+          'per_page': 999999999,
+          'search': search.text,
+        },
+      );
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {}
+        setState(() {});
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      _refreshController.refreshCompleted();
+      _refreshController.loadComplete();
+    }
+  }
+
+  getProducts() async {
+    try {
+      final response = await apiService.get(
+        'api/products',
+        params: {
+          'page': page,
+          'per_page': 10,
+          'search': search.text,
+          'brand_id': [],
+          'category_id': [],
+        },
+      );
+      _refreshController.refreshCompleted();
+      _refreshController.loadComplete();
+
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          products += response["data"];
+          page++;
+        }
+        setState(() {});
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      _refreshController.refreshCompleted();
+      _refreshController.loadComplete();
+    }
   }
 
   void _showFilterBottomSheet(BuildContext context) {
@@ -209,12 +232,47 @@ class _StockScreenState extends State<StockScreen> {
                                 right: 16,
                                 bottom: 8,
                               ),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  language["Categories"] ?? "Categories",
-                                  style: Theme.of(context).textTheme.titleLarge,
+                              child: TextField(
+                                controller: searchCategory,
+                                focusNode: _searchCategoryFocusNode,
+                                keyboardType: TextInputType.text,
+                                textInputAction: TextInputAction.done,
+                                style: Theme.of(context).textTheme.bodyLarge,
+                                cursorColor: Colors.black,
+                                decoration: InputDecoration(
+                                  hintText: language["Search Category"] ??
+                                      "Search Category",
+                                  filled: true,
+                                  fillColor: ColorConstants.fillColor,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  prefixIcon: IconButton(
+                                    onPressed: null,
+                                    icon: SvgPicture.asset(
+                                      "assets/icons/search.svg",
+                                      colorFilter: ColorFilter.mode(
+                                        Colors.grey,
+                                        BlendMode.srcIn,
+                                      ),
+                                    ),
+                                  ),
                                 ),
+                                onChanged: (value) {
+                                  _debounceCategory?.cancel();
+                                  _debounceCategory =
+                                      Timer(Duration(milliseconds: 300), () {
+                                    getCategories();
+                                  });
+                                },
                               ),
                             ),
                             Container(
@@ -240,12 +298,47 @@ class _StockScreenState extends State<StockScreen> {
                                 right: 16,
                                 bottom: 8,
                               ),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  language["Brands"] ?? "Brands",
-                                  style: Theme.of(context).textTheme.titleLarge,
+                              child: TextField(
+                                controller: searchBrand,
+                                focusNode: _searchBrandFocusNode,
+                                keyboardType: TextInputType.text,
+                                textInputAction: TextInputAction.done,
+                                style: Theme.of(context).textTheme.bodyLarge,
+                                cursorColor: Colors.black,
+                                decoration: InputDecoration(
+                                  hintText: language["Search Brand"] ??
+                                      "Search Brand",
+                                  filled: true,
+                                  fillColor: ColorConstants.fillColor,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  prefixIcon: IconButton(
+                                    onPressed: null,
+                                    icon: SvgPicture.asset(
+                                      "assets/icons/search.svg",
+                                      colorFilter: ColorFilter.mode(
+                                        Colors.grey,
+                                        BlendMode.srcIn,
+                                      ),
+                                    ),
+                                  ),
                                 ),
+                                onChanged: (value) {
+                                  _debounceBrand?.cancel();
+                                  _debounceBrand =
+                                      Timer(Duration(milliseconds: 300), () {
+                                    getBrands();
+                                  });
+                                },
                               ),
                             ),
                             Container(
@@ -323,9 +416,9 @@ class _StockScreenState extends State<StockScreen> {
     return GestureDetector(
       onTap: () {
         setState(() {
-          stocks[index]["selected"] = !stocks[index]["selected"];
+          products[index]["selected"] = !products[index]["selected"];
           selectedCount =
-              stocks.where((stock) => stock['selected'] == true).length;
+              products.where((stock) => stock['selected'] == true).length;
         });
       },
       child: Container(
@@ -335,11 +428,11 @@ class _StockScreenState extends State<StockScreen> {
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
-          color: stocks[index]["selected"]
+          color: products[index]["selected"]
               ? Theme.of(context).primaryColorLight
               : Colors.white,
           border: Border.all(
-            color: stocks[index]["selected"]
+            color: products[index]["selected"]
                 ? Theme.of(context).primaryColor
                 : Colors.white,
             width: 1.0,
@@ -353,7 +446,7 @@ class _StockScreenState extends State<StockScreen> {
               padding: EdgeInsets.all(12),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
-                color: stocks[index]["selected"]
+                color: products[index]["selected"]
                     ? Colors.white
                     : Theme.of(context).primaryColorLight,
               ),
@@ -369,7 +462,7 @@ class _StockScreenState extends State<StockScreen> {
                   horizontal: 4,
                 ),
                 child: Text(
-                  "${stocks[index]["name"]}",
+                  "${products[index]["products_name"]}",
                   overflow: TextOverflow.ellipsis,
                   maxLines: 3,
                   style: Theme.of(context).textTheme.labelLarge,
@@ -384,13 +477,13 @@ class _StockScreenState extends State<StockScreen> {
                 borderRadius: BorderRadius.circular(100),
                 color: Colors.white,
                 border: Border.all(
-                  color: stocks[index]["selected"]
+                  color: products[index]["selected"]
                       ? Theme.of(context).primaryColor
                       : Colors.grey,
                   width: 1.0,
                 ),
               ),
-              child: stocks[index]["selected"]
+              child: products[index]["selected"]
                   ? SvgPicture.asset(
                       "assets/icons/check.svg",
                       colorFilter: ColorFilter.mode(
@@ -501,7 +594,7 @@ class _StockScreenState extends State<StockScreen> {
               child: GridView.builder(
                 controller: _scrollController,
                 shrinkWrap: true,
-                itemCount: stocks.length,
+                itemCount: products.length,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   mainAxisExtent: 90,
                   crossAxisSpacing: 8,

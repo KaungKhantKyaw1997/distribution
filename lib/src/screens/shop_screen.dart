@@ -5,6 +5,8 @@ import 'package:distribution/routes.dart';
 import 'package:distribution/src/constants/color_constants.dart';
 import 'package:distribution/src/screens/bottombar_screen.dart';
 import 'package:distribution/src/screens/drawer_screen.dart';
+import 'package:distribution/src/services/api_service.dart';
+import 'package:distribution/src/utils/toast.dart';
 import 'package:distribution/src/widgets/multi_select_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -18,6 +20,7 @@ class ShopScreen extends StatefulWidget {
 }
 
 class _ShopScreenState extends State<ShopScreen> {
+  final apiService = ApiService();
   final ScrollController _scrollController = ScrollController();
   TextEditingController search = TextEditingController(text: '');
   FocusNode _searchFocusNode = FocusNode();
@@ -37,50 +40,83 @@ class _ShopScreenState extends State<ShopScreen> {
     'Sunday',
   ];
   List<String> selectedDays = [];
-
-  List shops = [
-    {
-      "name": "Shop 1",
-    },
-    {
-      "name": "Shop 2",
-    },
-    {
-      "name": "Shop 3",
-    },
-    {
-      "name": "Shop 4",
-    },
-    {
-      "name": "Shop 5",
-    },
-    {
-      "name": "Shop 6",
-    },
-    {
-      "name": "Shop 7",
-    },
-    {
-      "name": "Shop 8",
-    },
-    {
-      "name": "Shop 9",
-    },
-    {
-      "name": "Shop 10",
-    }
-  ];
+  List shops = [];
 
   @override
   void initState() {
     super.initState();
+    getShops();
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
     _searchFocusNode.dispose();
+    _debounce?.cancel();
     super.dispose();
+  }
+
+  getWeekDays() {
+    String weekdays = '';
+
+    for (String day in selectedDays) {
+      switch (day) {
+        case 'Monday':
+          weekdays += '1';
+          break;
+        case 'Tuesday':
+          weekdays += '2';
+          break;
+        case 'Wednesday':
+          weekdays += '3';
+          break;
+        case 'Thursday':
+          weekdays += '4';
+          break;
+        case 'Friday':
+          weekdays += '5';
+          break;
+        case 'Saturday':
+          weekdays += '6';
+          break;
+        case 'Sunday':
+          weekdays += '7';
+          break;
+        default:
+          break;
+      }
+    }
+
+    return weekdays;
+  }
+
+  getShops() async {
+    try {
+      final response = await apiService.get(
+        'api/shops',
+        params: {
+          'page': page,
+          'per_page': 10,
+          'search': search.text,
+          'weekdays': getWeekDays(),
+        },
+      );
+      _refreshController.refreshCompleted();
+      _refreshController.loadComplete();
+
+      if (response!["code"] == 200) {
+        if (response["data"].isNotEmpty) {
+          shops += response["data"];
+          page++;
+        }
+        setState(() {});
+      } else {
+        ToastUtil.showToast(response["code"], response["message"]);
+      }
+    } catch (e, s) {
+      _refreshController.refreshCompleted();
+      _refreshController.loadComplete();
+    }
   }
 
   shopCard(index) {
@@ -120,10 +156,10 @@ class _ShopScreenState extends State<ShopScreen> {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 4,
+                  horizontal: 8,
                 ),
                 child: Text(
-                  "${shops[index]["name"]}",
+                  "${shops[index]["shop_name"]}",
                   overflow: TextOverflow.ellipsis,
                   maxLines: 3,
                   style: Theme.of(context).textTheme.labelLarge,
@@ -191,7 +227,7 @@ class _ShopScreenState extends State<ShopScreen> {
                             data = [];
                             page = 1;
                             isApply = false;
-                            setState(() {});
+                            getShops();
                           },
                           child: Text(
                             language["Reset"] ?? "Reset",
@@ -290,7 +326,7 @@ class _ShopScreenState extends State<ShopScreen> {
                         data = [];
                         page = 1;
                         isApply = true;
-                        setState(() {});
+                        getShops();
                       },
                       child: Text(
                         language["Apply"] ?? "Apply",
@@ -358,6 +394,7 @@ class _ShopScreenState extends State<ShopScreen> {
               _debounce = Timer(Duration(milliseconds: 300), () {
                 data = [];
                 page = 1;
+                getShops();
               });
             },
           ),
@@ -405,10 +442,12 @@ class _ShopScreenState extends State<ShopScreen> {
           enablePullDown: true,
           enablePullUp: true,
           onRefresh: () async {
-            _refreshController.refreshCompleted();
+            page = 1;
+            shops = [];
+            await getShops();
           },
           onLoading: () async {
-            _refreshController.loadComplete();
+            await getShops();
           },
           child: SingleChildScrollView(
             child: Container(
