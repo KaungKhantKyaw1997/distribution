@@ -43,6 +43,12 @@ class _StockScreenState extends State<StockScreen> {
     'Sunday',
   ];
   List<String> selectedDays = [];
+
+  List brands = [];
+  List<String> brandnames = [];
+  List<int> selectedBrands = [];
+  List<String> selectedBrandsName = [];
+
   List products = [];
   int selectedCount = 0;
   bool isApply = false;
@@ -69,12 +75,17 @@ class _StockScreenState extends State<StockScreen> {
         params: {
           'page': page,
           'per_page': 999999999,
-          'search': search.text,
+          'search': searchBrand.text,
         },
       );
       if (response!["code"] == 200) {
-        if (response["data"].isNotEmpty) {}
-        setState(() {});
+        if (response["data"].isNotEmpty) {
+          setState(() {
+            brands = response["data"];
+            brandnames =
+                brands.map((item) => item["brand_name"] as String).toList();
+          });
+        }
       } else {
         ToastUtil.showToast(response["code"], response["message"]);
       }
@@ -108,13 +119,23 @@ class _StockScreenState extends State<StockScreen> {
 
   getProducts() async {
     try {
+      selectedBrands = [];
+      for (String selectedBrandName in selectedBrandsName) {
+        for (Map<String, dynamic> brand in brands) {
+          if (brand["brand_name"] == selectedBrandName) {
+            selectedBrands.add(brand["brand_id"]);
+            break;
+          }
+        }
+      }
+
       final response = await apiService.get(
         'api/products',
         params: {
           'page': page,
           'per_page': 10,
           'search': search.text,
-          'brand_id': [],
+          'brand_id': selectedBrands,
           'category_id': [],
         },
       );
@@ -180,6 +201,7 @@ class _StockScreenState extends State<StockScreen> {
                       onTap: () {
                         Navigator.of(context).pop();
                         selectedDays = [];
+                        selectedBrandsName = [];
                         data = [];
                         page = 1;
                         isApply = false;
@@ -203,6 +225,7 @@ class _StockScreenState extends State<StockScreen> {
                         Navigator.of(context).pop();
                         if (!isApply) {
                           selectedDays = [];
+                          selectedBrandsName = [];
                           setState(() {});
                         }
                       },
@@ -334,9 +357,12 @@ class _StockScreenState extends State<StockScreen> {
                                 ),
                                 onChanged: (value) {
                                   _debounceBrand?.cancel();
-                                  _debounceBrand =
-                                      Timer(Duration(milliseconds: 300), () {
-                                    getBrands();
+                                  _debounceBrand = Timer(
+                                      Duration(milliseconds: 300), () async {
+                                    brands = [];
+                                    brandnames = [];
+                                    await getBrands();
+                                    setState(() {});
                                   });
                                 },
                               ),
@@ -349,11 +375,11 @@ class _StockScreenState extends State<StockScreen> {
                                 bottom: 16,
                               ),
                               child: MultiSelectChip(
-                                days,
-                                selectedDays,
+                                brandnames,
+                                selectedBrandsName,
                                 onSelectionChanged: (selectedList) {
                                   setState(() {
-                                    selectedDays = selectedList;
+                                    selectedBrandsName = selectedList;
                                   });
                                 },
                               ),
@@ -398,6 +424,7 @@ class _StockScreenState extends State<StockScreen> {
                     data = [];
                     page = 1;
                     isApply = true;
+                    getProducts();
                   },
                   child: Text(
                     language["Apply"] ?? "Apply",
